@@ -149,6 +149,7 @@ typedef struct {
 	int isfloating, isurgent, isfullscreen;
 	uint32_t resize; /* configure serial of a pending resize */
 	unsigned int kblayout_idx;
+	pid_t pid;
 } Client;
 
 typedef struct {
@@ -367,6 +368,7 @@ static void setpsel(struct wl_listener *listener, void *data);
 static void setsel(struct wl_listener *listener, void *data);
 static void setup(void);
 static void spawn(const Arg *arg);
+static void spawninfo(const Arg *arg);
 static void startdrag(struct wl_listener *listener, void *data);
 static int statusin(int fd, unsigned int mask, void *data);
 static void tag(const Arg *arg);
@@ -545,6 +547,8 @@ applyrules(Client *c)
 
 	appid = client_get_appid(c);
 	title = client_get_title(c);
+
+	c->pid = client_get_pid(c);
 
 	for (r = rules; r < END(rules); r++) {
 		if ((!r->title || strstr(title, r->title))
@@ -3019,6 +3023,44 @@ spawn(const Arg *arg)
 		execvp(((char **)arg->v)[0], (char **)arg->v);
 		die("dwl: execvp %s failed:", ((char **)arg->v)[0]);
 	}
+}
+
+void
+spawninfo(const Arg *arg)
+{
+	int fd[2];
+	pid_t pid;
+	const char *title, *appid;
+	Client *c = focustop(selmon);
+
+	if (pipe(fd) == -1)
+		return;
+	if ((pid = fork()) == -1)
+		return;
+	if (pid == 0) {
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[0]);
+		close(fd[1]);
+		dup2(STDERR_FILENO, STDOUT_FILENO);
+		setsid();
+		execvp(((char **)arg->v)[0], (char **)arg->v);
+		die("dwl: execvp %s failed:", ((char **)arg->v)[0]);
+	}
+
+	close(fd[0]);
+
+	if (c) {
+		if (!(title = client_get_title(c)))
+			title = "";
+		if (!(appid = client_get_appid(c)))
+			appid = "";
+		dprintf(fd[1], "%d\n%s\n%s\n%"PRIu32"\n%d,%d %dx%d\n", c->pid,
+				title, appid, c->tags,
+				c->geom.x + c->bw, c->geom.y + c->bw,
+				c->geom.width - 2 * c->bw, c->geom.height - 2 * c->bw);
+	}
+
+	close(fd[1]);
 }
 
 void
