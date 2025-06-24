@@ -62,6 +62,7 @@
 #include <wlr/types/wlr_xdg_output_v1.h>
 #include <wlr/types/wlr_xdg_shell.h>
 #include <wlr/interfaces/wlr_buffer.h>
+#include <wlr/util/box.h>
 #include <wlr/util/log.h>
 #include <wlr/util/region.h>
 #include <xkbcommon/xkbcommon.h>
@@ -277,6 +278,8 @@ static void arrangelayers(Monitor *m);
 static void autostartexec(void);
 static void axisnotify(struct wl_listener *listener, void *data);
 static bool baracceptsinput(struct wlr_scene_buffer *buffer, double *sx, double *sy);
+static void bstack(Monitor *m);
+static void bstackhoriz(Monitor *m);
 static void bufdestroy(struct wlr_buffer *buffer);
 static bool bufdatabegin(struct wlr_buffer *buffer, uint32_t flags,
 		void **data, uint32_t *format, size_t *stride);
@@ -728,6 +731,86 @@ baracceptsinput(struct wlr_scene_buffer *buffer, double *sx, double *sy)
 	return true;
 }
 
+static void
+bstack(Monitor *m) 
+{
+	int w, h, mh, mx, tx, ty, tw;
+	int i, n = 0;
+	Client *c;
+
+	wl_list_for_each(c, &clients, link)
+		if (VISIBLEON(c, m) && !c->isfloating)
+			n++;
+	if (n == 0)
+		return;
+
+	if (n > m->nmaster) {
+		mh = (int)round(m->nmaster ? m->mfact * m->w.height : 0);
+		tw = m->w.width / (n - m->nmaster);
+		ty = m->w.y + mh;
+	} else {
+		mh = m->w.height;
+		tw = m->w.width;
+		ty = m->w.y;
+	}
+
+	i = mx = 0;
+	tx = m-> w.x;
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating)
+			continue;
+		if (i < m->nmaster) {
+			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
+			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
+			mx += c->geom.width;
+		} else {
+			h = m->w.height - mh;
+			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = tw, .height = h }, 0);
+			if (tw != m->w.width)
+				tx += c->geom.width;
+		}
+		i++;
+	}
+}
+
+static void
+bstackhoriz(Monitor *m) {
+	int w, mh, mx, tx, ty, th;
+	int i, n = 0;
+	Client *c;
+
+	wl_list_for_each(c, &clients, link)
+		if (VISIBLEON(c, m) && !c->isfloating)
+			n ++;
+	if (n == 0)
+		return;
+
+	if (n > m->nmaster) {
+		mh = (int)round(m->nmaster ? m->mfact * m->w.height : 0);
+		th = (m->w.height - mh) / (n - m->nmaster);
+		ty = m->w.y + mh;
+	} else {
+		th = mh = m->w.height;
+		ty = m->w.y;
+	}
+
+	i = mx = 0;
+	tx = m-> w.x;
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c,m) || c->isfloating)
+			continue;
+		if (i < m->nmaster) {
+			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
+			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
+			mx += c->geom.width;
+		} else {
+			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = m->w.width, .height = th }, 0);
+			if (th != m->w.height)
+				ty += c->geom.height;
+		}
+		i++;
+	}
+}
 void
 bufdestroy(struct wlr_buffer *wlr_buffer)
 {
@@ -3748,3 +3831,4 @@ main(int argc, char *argv[])
 usage:
 	die("Usage: %s [-v] [-d] [-s startup command]", argv[0]);
 }
+
