@@ -2981,6 +2981,8 @@ tag(const Arg *arg)
 	sel->tags = arg->ui & TAGMASK;
 	focusclient(focustop(selmon), 1);
 	arrange(selmon);
+	if (follow == 1)
+		view(arg);
 	drawbars();
 }
 
