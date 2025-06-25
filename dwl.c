@@ -618,7 +618,6 @@ arrange(Monitor *m)
 
 	if (m->lt[m->sellt]->arrange)
 		m->lt[m->sellt]->arrange(m);
-	motionnotify(0, NULL, 0, 0, 0, 0);
 	checkidleinhibitor(NULL);
 	warpcursor(focustop(selmon));
     drawbar(m);
