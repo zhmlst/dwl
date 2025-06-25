@@ -28,7 +28,7 @@ static int log_level = WLR_ERROR;
 
 /* Autostart */
 static const char *const autostart[] = {
-        "mako", "&", NULL,
+        "mako", NULL,
         NULL
 };
 
@@ -123,7 +123,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 // #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
-#define WMENUFLAGS "-f monospace\ 12"
+#define WMENUFLAGS "-f", "monospace 12"
 
 /* commands */
 static const char *terminal[] = { "foot", NULL };
