@@ -29,7 +29,7 @@ static int log_level = WLR_ERROR;
 /* Autostart */
 static const char *const autostart[] = {
     "mako", NULL,
-    "sh", "-c", "swaybg -i \"$(randfile $HOME/pictures/wallpapers)\"", NULL,
+    "sh", "-c", "swaybg -i $(randfile $HOME/pictures/wallpapers)", NULL,
     NULL
 };
 
@@ -45,12 +45,6 @@ static const Layout layouts[] = {
 	{ "TTT",      bstack },
 	{ "[D]",      deck },
 	{ "><>",      NULL },
-};
-
-static const Layout *layoutcycle[] = {
-    &layouts[0],
-    &layouts[1],
-    NULL
 };
 
 /* monitors */
@@ -126,6 +120,9 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 #define WMENUFLAGS "-f", "monospace 12"
 
+static const Layout *tilebstack[] = { &layouts[0], &layouts[1], NULL };
+static const Layout *floatingtile[] = { &layouts[3], &layouts[0], NULL };
+
 /* commands */
 static const char *terminal[] = { "foot", NULL };
 static const char *browser[]  = { "firefox", NULL };
@@ -134,7 +131,7 @@ static const char *runmenu[]  = { "wmenu-run", WMENUFLAGS, NULL };
 static const char *screenshot[] = { LIBDIR "screenshot", NULL };
 static const char *clientshot[] = { LIBDIR "screenshot", "-c", NULL };
 static const char *regionshot[] = { LIBDIR "screenshot", "-r", NULL };
-static const char *toggleconnection[] = { LIBDIR "toggleconnection", WMENUFLAGS, NULL };
+static const char *connectionmenu[] = { LIBDIR "connectionmenu", WMENUFLAGS, NULL };
 
 #include "keys.h"
 static const Key keys[] = {
@@ -143,13 +140,12 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_w,       spawn,            {.v = runmenu} },
     { MODKEY,                    Key_e,       spawn,            {.v = browser} },
     { MODKEY|WLR_MODIFIER_SHIFT, Key_e,       spawn,            {.v = explore} },
-    { MODKEY,                    Key_r,       cyclelayouts,     {0} },
-
+    { MODKEY,                    Key_r,       cyclelayouts,     {.v = tilebstack} },
 
 	{ MODKEY,                    Key_d,       setlayout,        {.v = &layouts[2]} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_f,       setlayout,        {.v = &layouts[3]} },
 	{ MODKEY,                    Key_f,       togglefloating,   {0} },
-	{ MODKEY,                    Key_n,       spawn,            {.v = toggleconnection} },
+	{ MODKEY,                    Key_n,       spawn,            {.v = connectionmenu} },
 	{ MODKEY,                    Key_m,       spawn,            {.v = terminal} },
 	{ MODKEY,                    Key_space,   togglefullscreen, {0} },
 
@@ -195,10 +191,7 @@ static const Key keys[] = {
 };
 
 static const Button buttons[] = {
-	{ ClkLtSymbol, 0,      BTN_LEFT,   setlayout,        {.v = &layouts[0]} },
-	{ ClkLtSymbol, 0,      BTN_RIGHT,  setlayout,        {.v = &layouts[2]} },
-	{ ClkTitle,    0,      BTN_MIDDLE, togglefullscreen, {0} },
-	{ ClkStatus,   0,      BTN_MIDDLE, spawn,            {.v = terminal} },
+	{ ClkLtSymbol, 0,      BTN_LEFT,   cyclelayouts,     {.v = floatingtile} },
 	{ ClkClient,   MODKEY, BTN_LEFT,   moveresize,       {.ui = CurMove} },
 	{ ClkClient,   MODKEY, BTN_MIDDLE, togglefloating,   {0} },
 	{ ClkClient,   MODKEY, BTN_RIGHT,  moveresize,       {.ui = CurResize} },

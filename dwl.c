@@ -1567,17 +1567,18 @@ cursorwarptohint(void)
 static void
 cyclelayouts(const Arg *arg)
 {
-	const Layout *current = selmon->lt[selmon->sellt];
-	int i;
+    const Layout **layoutcycle = (const Layout **)arg->v;
+    const Layout *current = selmon->lt[selmon->sellt];
+    int i;
 
-	for (i = 0; layoutcycle[i]; i++) {
-		if (layoutcycle[i] == current) {
-			setlayout(&(Arg){ .v = layoutcycle[i + 1] ? layoutcycle[i + 1] : layoutcycle[0] });
-			return;
-		}
-	}
+    for (i = 0; layoutcycle[i]; i++) {
+        if (layoutcycle[i] == current) {
+            setlayout(&(Arg){ .v = layoutcycle[i + 1] ? layoutcycle[i + 1] : layoutcycle[0] });
+            return;
+        }
+    }
 
-	setlayout(&(Arg){ .v = layoutcycle[0] });
+    setlayout(&(Arg){ .v = layoutcycle[0] });
 }
 
 void
