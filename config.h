@@ -122,7 +122,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 	{ MODKEY|WLR_MODIFIER_SHIFT, KEY,            tag,             {.ui = 1 << TAG} }, \
 	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,KEY,toggletag,  {.ui = 1 << TAG} }
 
-//#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 #define WMENUFLAGS "-f", "monospace 12"
 
@@ -162,6 +162,11 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,       movestack,        {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_l,       incnmaster,       {.i = -1} },
 
+    { 0,                   Key_XF86AudioMute, spawn,            SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && pkill -RTMIN+2 someblocks") },
+    { 0,            Key_XF86AudioLowerVolume, spawn,            SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && pkill -RTMIN+2 someblocks") },
+    { 0,            Key_XF86AudioRaiseVolume, spawn,            SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 1.0 && pkill -RTMIN+2 someblocks") },
+    { 0,           Key_XF86MonBrightnessDown, spawn,            SHCMD("brightnessctl set 5%-") },
+    { 0,             Key_XF86MonBrightnessUp, spawn,            SHCMD("brightnessctl set 5%+") },
 	{ 0,                         Key_Print,   spawninfo,        {.v = screenshot} },
 	{ MODKEY,                    Key_Print,   spawninfo,        {.v = clientshot} },
 	{ WLR_MODIFIER_SHIFT,        Key_Print,   spawninfo,        {.v = regionshot} },
