@@ -128,6 +128,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* commands */
 static const char *terminal[] = { "foot", NULL };
 static const char *browser[]  = { "firefox", NULL };
+static const char *explore[]  = { "nemo", NULL };
 static const char *runmenu[]  = { "wmenu-run", WMENUFLAGS, NULL };
 
 #include "keys.h"
@@ -136,6 +137,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_q,       killclient,       {0} },
 	{ MODKEY,                    Key_w,       spawn,            {.v = runmenu} },
     { MODKEY,                    Key_e,       spawn,            {.v = browser} },
+    { MODKEY|WLR_MODIFIER_SHIFT, Key_e,       spawn,            {.v = explore} },
     { MODKEY,                    Key_r,       cyclelayouts,     {0} },
 	{ MODKEY,                    Key_d,       setlayout,        {.v = &layouts[2]} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_f,       setlayout,        {.v = &layouts[3]} },
@@ -148,6 +150,8 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_k,       focusstack,       {.i = -1} },
 	{ MODKEY,                    Key_l,       setmfact,         {.f = +0.05f} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_h,       incnmaster,       {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_j,       movestack,        {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,       movestack,        {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_l,       incnmaster,       {.i = -1} },
 
 	{ MODKEY,                    Key_0,       view,             {.ui = ~0} },
