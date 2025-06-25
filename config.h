@@ -28,8 +28,9 @@ static int log_level = WLR_ERROR;
 
 /* Autostart */
 static const char *const autostart[] = {
-        "mako", NULL,
-        NULL
+    "mako", NULL,
+    "sh", "-c", "swaybg -i \"$(randfile $HOME/pictures/wallpapers)\"", NULL,
+    NULL
 };
 
 static const Rule rules[] = {
@@ -121,7 +122,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 	{ MODKEY|WLR_MODIFIER_SHIFT, KEY,            tag,             {.ui = 1 << TAG} }, \
 	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,KEY,toggletag,  {.ui = 1 << TAG} }
 
-// #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+//#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 #define WMENUFLAGS "-f", "monospace 12"
 
