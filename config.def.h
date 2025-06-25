@@ -49,11 +49,9 @@ static const Rule rules[] = {
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
-	{ "[D]",      deck },
 	{ "TTT",      bstack },
-	{ "===",      bstackhoriz },
+	{ "[D]",      deck },
+	{ "><>",      NULL },    /* no layout function means floating behavior */
 };
 
 /* monitors */
@@ -156,12 +154,10 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_d,       incnmaster,     {.i = -1} },
 	{ MODKEY,                    Key_h,       setmfact,       {.f = -0.05f} },
 	{ MODKEY,                    Key_l,       setmfact,       {.f = +0.05f} },
-	{ MODKEY,                    Key_Return,  zoom,           {0} },
 	{ MODKEY,                    Key_Tab,     view,           {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,       killclient,     {0} },
 	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                    Key_m,       setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                    Key_space,   setlayout,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
 	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
@@ -194,15 +190,15 @@ static const Key keys[] = {
 };
 
 static const Button buttons[] = {
-	{ ClkLtSymbol, 0,      BTN_LEFT,   setlayout,      {.v = &layouts[0]} },
-	{ ClkLtSymbol, 0,      BTN_RIGHT,  setlayout,      {.v = &layouts[2]} },
-	{ ClkTitle,    0,      BTN_MIDDLE, zoom,           {0} },
-	{ ClkStatus,   0,      BTN_MIDDLE, spawn,          {.v = termcmd} },
-	{ ClkClient,   MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
-	{ ClkClient,   MODKEY, BTN_MIDDLE, togglefloating, {0} },
-	{ ClkClient,   MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
-	{ ClkTagBar,   0,      BTN_LEFT,   view,           {0} },
-	{ ClkTagBar,   0,      BTN_RIGHT,  toggleview,     {0} },
-	{ ClkTagBar,   MODKEY, BTN_LEFT,   tag,            {0} },
-	{ ClkTagBar,   MODKEY, BTN_RIGHT,  toggletag,      {0} },
+	{ ClkLtSymbol, 0,      BTN_LEFT,   setlayout,        {.v = &layouts[0]} },
+	{ ClkLtSymbol, 0,      BTN_RIGHT,  setlayout,        {.v = &layouts[2]} },
+	{ ClkTitle,    0,      BTN_MIDDLE, togglefullscreen, {0} },
+	{ ClkStatus,   0,      BTN_MIDDLE, spawn,            {.v = termcmd} },
+	{ ClkClient,   MODKEY, BTN_LEFT,   moveresize,       {.ui = CurMove} },
+	{ ClkClient,   MODKEY, BTN_MIDDLE, togglefloating,   {0} },
+	{ ClkClient,   MODKEY, BTN_RIGHT,  moveresize,       {.ui = CurResize} },
+	{ ClkTagBar,   0,      BTN_LEFT,   view,             {0} },
+	{ ClkTagBar,   0,      BTN_RIGHT,  toggleview,       {0} },
+	{ ClkTagBar,   MODKEY, BTN_LEFT,   tag,              {0} },
+	{ ClkTagBar,   MODKEY, BTN_RIGHT,  toggletag,        {0} },
 };

@@ -279,7 +279,6 @@ static void autostartexec(void);
 static void axisnotify(struct wl_listener *listener, void *data);
 static bool baracceptsinput(struct wlr_scene_buffer *buffer, double *sx, double *sy);
 static void bstack(Monitor *m);
-static void bstackhoriz(Monitor *m);
 static void bufdestroy(struct wlr_buffer *buffer);
 static bool bufdatabegin(struct wlr_buffer *buffer, uint32_t flags,
 		void **data, uint32_t *format, size_t *stride);
@@ -343,7 +342,6 @@ static void killclient(const Arg *arg);
 static void locksession(struct wl_listener *listener, void *data);
 static void mapnotify(struct wl_listener *listener, void *data);
 static void maximizenotify(struct wl_listener *listener, void *data);
-static void monocle(Monitor *m);
 static void motionabsolute(struct wl_listener *listener, void *data);
 static void motionnotify(uint32_t time, struct wlr_input_device *device, double sx,
 		double sy, double sx_unaccel, double sy_unaccel);
@@ -399,7 +397,6 @@ static void warpcursor(const Client *c);
 static Monitor *xytomon(double x, double y);
 static void xytonode(double x, double y, struct wlr_surface **psurface,
 		Client **pc, LayerSurface **pl, double *nx, double *ny);
-static void zoom(const Arg *arg);
 
 /* variables */
 static pid_t child_pid = -1;
@@ -776,44 +773,6 @@ bstack(Monitor *m)
 	}
 }
 
-static void
-bstackhoriz(Monitor *m) {
-	int w, mh, mx, tx, ty, th;
-	int i, n = 0;
-	Client *c;
-
-	wl_list_for_each(c, &clients, link)
-		if (VISIBLEON(c, m) && !c->isfloating)
-			n ++;
-	if (n == 0)
-		return;
-
-	if (n > m->nmaster) {
-		mh = (int)round(m->nmaster ? m->mfact * m->w.height : 0);
-		th = (m->w.height - mh) / (n - m->nmaster);
-		ty = m->w.y + mh;
-	} else {
-		th = mh = m->w.height;
-		ty = m->w.y;
-	}
-
-	i = mx = 0;
-	tx = m-> w.x;
-	wl_list_for_each(c, &clients, link) {
-		if (!VISIBLEON(c,m) || c->isfloating)
-			continue;
-		if (i < m->nmaster) {
-			w = (m->w.width - mx) / (MIN(n, m->nmaster) - i);
-			resize(c, (struct wlr_box) { .x = m->w.x + mx, .y = m->w.y, .width = w, .height = mh }, 0);
-			mx += c->geom.width;
-		} else {
-			resize(c, (struct wlr_box) { .x = tx, .y = ty, .width = m->w.width, .height = th }, 0);
-			if (th != m->w.height)
-				ty += c->geom.height;
-		}
-		i++;
-	}
-}
 void
 bufdestroy(struct wlr_buffer *wlr_buffer)
 {
@@ -2378,24 +2337,6 @@ maximizenotify(struct wl_listener *listener, void *data)
 }
 
 void
-monocle(Monitor *m)
-{
-	Client *c;
-	int n = 0;
-
-	wl_list_for_each(c, &clients, link) {
-		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
-			continue;
-		resize(c, m->w, 0);
-		n++;
-	}
-	if (n)
-		snprintf(m->ltsymbol, LENGTH(m->ltsymbol), "[%d]", n);
-	if ((c = focustop(m)))
-		wlr_scene_node_raise_to_top(&c->scene->node);
-}
-
-void
 motionabsolute(struct wl_listener *listener, void *data)
 {
 	/* This event is forwarded by the cursor when a pointer emits an _absolute_
@@ -2539,8 +2480,7 @@ moveresize(const Arg *arg)
 
 int
 needsborder(Client *c) {
-	return ((countclients(c->mon) > 1
-			&& c->mon->lt[c->mon->sellt]->arrange != monocle)
+	return ((countclients(c->mon) > 1)
 		|| c->isfloating)
 		&& !c->isfullscreen;
 }
@@ -3721,39 +3661,6 @@ xytonode(double x, double y, struct wlr_surface **psurface,
 	if (psurface) *psurface = surface;
 	if (pc) *pc = c;
 	if (pl) *pl = l;
-}
-
-void
-zoom(const Arg *arg)
-{
-	Client *c, *sel = focustop(selmon);
-
-	if (!sel || !selmon || !selmon->lt[selmon->sellt]->arrange || sel->isfloating)
-		return;
-
-	/* Search for the first tiled window that is not sel, marking sel as
-	 * NULL if we pass it along the way */
-	wl_list_for_each(c, &clients, link) {
-		if (VISIBLEON(c, selmon) && !c->isfloating) {
-			if (c != sel)
-				break;
-			sel = NULL;
-		}
-	}
-
-	/* Return if no other tiled window was found */
-	if (&c->link == &clients)
-		return;
-
-	/* If we passed sel, move c to the front; otherwise, move sel to the
-	 * front */
-	if (!sel)
-		sel = c;
-	wl_list_remove(&sel->link);
-	wl_list_insert(&clients, &sel->link);
-
-	focusclient(sel, 1);
-	arrange(selmon);
 }
 
 #ifdef XWAYLAND
