@@ -123,44 +123,49 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 // #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
+#define WMENUFLAGS "-f monospace\ 12"
+
 /* commands */
-static const char *termcmd[] = { "foot", NULL };
-static const char *menucmd[] = { "wmenu-run", NULL };
+static const char *terminal[] = { "foot", NULL };
+static const char *browser[]  = { "firefox", NULL };
+static const char *runmenu[]  = { "wmenu-run", WMENUFLAGS, NULL };
 
 #include "keys.h"
 static const Key keys[] = {
-	/* modifier                  key          function        argument */
-	{ MODKEY,                    Key_p,       spawn,          {.v = menucmd} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  spawn,          {.v = termcmd} },
-	{ MODKEY,                    Key_j,       focusstack,     {.i = +1} },
-	{ MODKEY,                    Key_k,       focusstack,     {.i = -1} },
-	{ MODKEY,                    Key_i,       incnmaster,     {.i = +1} },
-	{ MODKEY,                    Key_d,       incnmaster,     {.i = -1} },
-	{ MODKEY,                    Key_h,       setmfact,       {.f = -0.05f} },
-	{ MODKEY,                    Key_l,       setmfact,       {.f = +0.05f} },
-	{ MODKEY,                    Key_Tab,     view,           {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,       killclient,     {0} },
-	{ MODKEY,                    Key_t,       cyclelayouts,   {0} },
-	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                    Key_space,   setlayout,      {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
-	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
-	{ MODKEY,                    Key_0,       view,           {.ui = ~0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,       tag,            {.ui = ~0} },
-	{ MODKEY,                    Key_comma,   focusmon,       {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    Key_period,  focusmon,       {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_comma,   tagmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_period,  tagmon,         {.i = WLR_DIRECTION_RIGHT} },
-	TAGKEYS(                     Key_1,                       0),
-	TAGKEYS(                     Key_2,                       1),
-	TAGKEYS(                     Key_3,                       2),
-	TAGKEYS(                     Key_4,                       3),
-	TAGKEYS(                     Key_5,                       4),
-	TAGKEYS(                     Key_6,                       5),
-	TAGKEYS(                     Key_7,                       6),
-	TAGKEYS(                     Key_8,                       7),
-	TAGKEYS(                     Key_9,                       8),
-	{ MODKEY|WLR_MODIFIER_SHIFT, Key_q,       quit,           {0} },
+	/* modifier                  key          function          argument */
+	{ MODKEY,                    Key_q,       killclient,       {0} },
+	{ MODKEY,                    Key_w,       spawn,            {.v = runmenu} },
+    { MODKEY,                    Key_e,       spawn,            {.v = browser} },
+    { MODKEY,                    Key_r,       cyclelayouts,     {0} },
+	{ MODKEY,                    Key_d,       setlayout,        {.v = &layouts[2]} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_f,       setlayout,        {.v = &layouts[3]} },
+	{ MODKEY,                    Key_f,       togglefloating,   {0} },
+	{ MODKEY,                    Key_m,       spawn,            {.v = terminal} },
+	{ MODKEY,                    Key_space,   togglefullscreen, {0} },
+
+	{ MODKEY,                    Key_h,       setmfact,         {.f = -0.05f} },
+	{ MODKEY,                    Key_j,       focusstack,       {.i = +1} },
+	{ MODKEY,                    Key_k,       focusstack,       {.i = -1} },
+	{ MODKEY,                    Key_l,       setmfact,         {.f = +0.05f} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_h,       incnmaster,       {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_l,       incnmaster,       {.i = -1} },
+
+	{ MODKEY,                    Key_0,       view,             {.ui = ~0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,       tag,              {.ui = ~0} },
+	TAGKEYS(                     Key_1,                         0),
+	TAGKEYS(                     Key_2,                         1),
+	TAGKEYS(                     Key_3,                         2),
+	TAGKEYS(                     Key_4,                         3),
+	TAGKEYS(                     Key_5,                         4),
+	TAGKEYS(                     Key_6,                         5),
+	TAGKEYS(                     Key_7,                         6),
+	TAGKEYS(                     Key_8,                         7),
+	TAGKEYS(                     Key_9,                         8),
+	{ MODKEY,                    Key_comma,   focusmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                    Key_period,  focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_comma,   tagmon,           {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_period,  tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, Key_q,       quit,             {0} },
 
     #define CHVT(KEY,n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, KEY, chvt, {.ui = (n)} }
 	CHVT(Key_F1, 1), CHVT(Key_F2,  2),  CHVT(Key_F3,  3),  CHVT(Key_F4,  4),
@@ -172,7 +177,7 @@ static const Button buttons[] = {
 	{ ClkLtSymbol, 0,      BTN_LEFT,   setlayout,        {.v = &layouts[0]} },
 	{ ClkLtSymbol, 0,      BTN_RIGHT,  setlayout,        {.v = &layouts[2]} },
 	{ ClkTitle,    0,      BTN_MIDDLE, togglefullscreen, {0} },
-	{ ClkStatus,   0,      BTN_MIDDLE, spawn,            {.v = termcmd} },
+	{ ClkStatus,   0,      BTN_MIDDLE, spawn,            {.v = terminal} },
 	{ ClkClient,   MODKEY, BTN_LEFT,   moveresize,       {.ui = CurMove} },
 	{ ClkClient,   MODKEY, BTN_MIDDLE, togglefloating,   {0} },
 	{ ClkClient,   MODKEY, BTN_RIGHT,  moveresize,       {.ui = CurResize} },
