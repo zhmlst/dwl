@@ -54,6 +54,12 @@ static const Layout layouts[] = {
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 };
 
+static const Layout *layoutcycle[] = {
+    &layouts[0],
+    &layouts[1],
+    NULL
+};
+
 /* monitors */
 /* (x=-1, y=-1) is reserved as an "autoconfigure" monitor position indicator
  * WARNING: negative values other than (-1, -1) cause problems with Xwayland clients
@@ -156,7 +162,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_l,       setmfact,       {.f = +0.05f} },
 	{ MODKEY,                    Key_Tab,     view,           {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,       killclient,     {0} },
-	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                    Key_t,       cyclelayouts,   {0} },
 	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                    Key_space,   setlayout,      {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
