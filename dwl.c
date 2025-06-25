@@ -621,6 +621,7 @@ arrange(Monitor *m)
 	motionnotify(0, NULL, 0, 0, 0, 0);
 	checkidleinhibitor(NULL);
 	warpcursor(focustop(selmon));
+    drawbar(m);
 }
 
 void
@@ -1842,17 +1843,39 @@ drawbar(Monitor *m)
 	drwl_setscheme(m->drw, colors[SchemeNorm]);
 	x = drwl_text(m->drw, x, 0, w, m->b.height, m->lrpad / 2, m->ltsymbol, 0);
 
-	if ((w = m->b.width - tw - x) > m->b.height) {
-		if (c) {
-			drwl_setscheme(m->drw, colors[m == selmon ? SchemeSel : SchemeNorm]);
-			drwl_text(m->drw, x, 0, w, m->b.height, m->lrpad / 2, client_get_title(c), 0);
-			if (c && c->isfloating)
-				drwl_rect(m->drw, x + boxs, boxs, boxw, boxw, 0, 0);
-		} else {
-			drwl_setscheme(m->drw, colors[SchemeNorm]);
-			drwl_rect(m->drw, x, 0, w, m->b.height, 1, 1);
-		}
-	}
+    if ((w = m->b.width - tw - x) > m->b.height) {
+        Client *tagged[LENGTH(tags)];
+        size_t n = 0;
+
+        wl_list_for_each(c, &clients, link) {
+            if (c->mon == m && (c->tags & m->tagset[m->seltags])) {
+                tagged[n++] = c;
+                if (n >= LENGTH(tags))
+                    break;
+            }
+        }
+
+        if (n) {
+            int per = w / n;
+            int cx = x;
+            Client *focused = focustop(m);
+
+            for (size_t j = 0; j < n; j++) {
+                Client *cl = tagged[j];
+
+                uint8_t sch = (cl == focused) ? SchemeSel : SchemeNorm;
+                drwl_setscheme(m->drw, colors[sch]);
+                drwl_text(m->drw, cx, 0, per, m->b.height,
+                          m->lrpad / 2, client_get_title(cl), 0);
+                if (cl->isfloating)
+                    drwl_rect(m->drw, cx + boxs, boxs, boxw, boxw, 1, 0);
+                cx += per;
+            }
+        } else {
+            drwl_setscheme(m->drw, colors[SchemeNorm]);
+            drwl_rect(m->drw, x, 0, w, m->b.height, 1, 1);
+        }
+    }
 
 	wlr_scene_buffer_set_dest_size(m->scene_buffer,
 		m->b.real_width, m->b.real_height);
