@@ -130,6 +130,9 @@ static const char *terminal[] = { "foot", NULL };
 static const char *browser[]  = { "firefox", NULL };
 static const char *explore[]  = { "nemo", NULL };
 static const char *runmenu[]  = { "wmenu-run", WMENUFLAGS, NULL };
+static const char *screenshot[] = { LIBDIR "screenshot", NULL };
+static const char *clientshot[] = { LIBDIR "screenshot", "-c", NULL };
+static const char *regionshot[] = { LIBDIR "screenshot", "-r", NULL };
 static const char *toggleconnection[] = { LIBDIR "toggleconnection", WMENUFLAGS, NULL };
 
 #include "keys.h"
@@ -140,6 +143,8 @@ static const Key keys[] = {
     { MODKEY,                    Key_e,       spawn,            {.v = browser} },
     { MODKEY|WLR_MODIFIER_SHIFT, Key_e,       spawn,            {.v = explore} },
     { MODKEY,                    Key_r,       cyclelayouts,     {0} },
+
+
 	{ MODKEY,                    Key_d,       setlayout,        {.v = &layouts[2]} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_f,       setlayout,        {.v = &layouts[3]} },
 	{ MODKEY,                    Key_f,       togglefloating,   {0} },
@@ -155,6 +160,10 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_j,       movestack,        {.i = +1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_k,       movestack,        {.i = -1} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_l,       incnmaster,       {.i = -1} },
+
+	{ 0,                         Key_Print,   spawninfo,        {.v = screenshot} },
+	{ MODKEY,                    Key_Print,   spawninfo,        {.v = clientshot} },
+	{ WLR_MODIFIER_SHIFT,        Key_Print,   spawninfo,        {.v = regionshot} },
 
 	{ MODKEY,                    Key_0,       view,             {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,       tag,              {.ui = ~0} },

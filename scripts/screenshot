@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+mapfile -t lines
+
+if (( ${#lines[@]} < 5 )); then
+  APPID="screenshot"
+else
+  APPID="${lines[2]}"
+fi
+
+GEOMETRY="${lines[4]:-}"
+
+SCREENSHOTS_DIR="$HOME/pictures/Screenshots"
+mkdir -p "$SCREENSHOTS_DIR"
+
+mk_screenshot_file() {
+  mktemp -p "$SCREENSHOTS_DIR" "${APPID}_XXXXXX.png"
+}
+
+notify_cancel() {
+  notify-send "Screenshot cancelled" "$1"
+  exit 0
+}
+
+case "${1:-}" in
+  -r|--region)
+    if ! REGION=$(slurp); then
+      notify_cancel "No region selected"
+    fi
+
+    file="$(mk_screenshot_file)"
+    grim -g "$REGION" "$file"
+    ;;
+  -c|--client)
+    file="$(mk_screenshot_file)"
+    if [[ -z "$GEOMETRY" ]]; then
+      grim "$file"
+    else
+      grim -g "$GEOMETRY" "$file"
+    fi
+    ;;
+  *)
+    file="$(mk_screenshot_file)"
+    grim "$file"
+    ;;
+esac
+
+if [[ ! -s "$file" ]]; then
+  rm -f "$file"
+  notify_cancel "No screenshot data"
+fi
+
+notify-send -i "$file" "Screenshot taken" "$file"
