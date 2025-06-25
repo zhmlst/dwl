@@ -5,6 +5,9 @@ include config.mk
 
 # flags for compiling
 DWLCPPFLAGS = -I. -DWLR_USE_UNSTABLE -D_POSIX_C_SOURCE=200809L \
+	-DVERSION=\"$(VERSION)\" \
+    -DLIBDIR=\"$(PREFIX)/lib/dwl/\" \
+    $(XWAYLAND)
 	-DVERSION=\"$(VERSION)\" $(XWAYLAND)
 DWLDEVCFLAGS = -g -Wpedantic -Wall -Wextra -Wdeclaration-after-statement \
 	-Wno-unused-parameter -Wshadow -Wunused-macros -Werror=strict-prototypes \
@@ -66,6 +69,9 @@ install: dwl
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/dwl
 	cp -f dwl-session $(DESTDIR)$(PREFIX)/bin/dwl-session
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/dwl-session
+	mkdir -p $(DESTDIR)$(PREFIX)/lib/dwl
+	cp -rf scripts/* $(DESTDIR)$(PREFIX)/lib/dwl
+	chmod 755 $(DESTDIR)$(PREFIX)/lib/dwl/*
 	mkdir -p $(DESTDIR)$(MANDIR)/man1
 	cp -f dwl.1 $(DESTDIR)$(MANDIR)/man1
 	chmod 644 $(DESTDIR)$(MANDIR)/man1/dwl.1

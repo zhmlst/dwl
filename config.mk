@@ -5,6 +5,7 @@ PKG_CONFIG = pkg-config
 
 # paths
 PREFIX = /usr
+LIBDIR = $(PREFIX)/lib
 MANDIR = $(PREFIX)/share/man
 DATADIR = $(PREFIX)/share
 

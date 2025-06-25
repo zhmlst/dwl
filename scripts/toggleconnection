@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+wmenuflags=("$@")
+#wmenuflags+=("-p" "toggle:")
+
+active_suffix=" ✓"
+inactive_suffix=" ✗"
+
+active_list=$(nmcli -t -f NAME c show --active)
+
+menu_items=$(nmcli -t -f NAME,TYPE,DEVICE c show | \
+  awk -F: '$2 == "vpn" || $2 == "802-11-wireless"' | \
+  while IFS=: read -r name _ _; do
+    if echo "$active_list" | grep -Fxq "$name"; then
+        printf "%s%s\n" "$name" "$active_suffix"
+    else
+        printf "%s%s\n" "$name" "$inactive_suffix"
+    fi
+done)
+
+selection=$(echo "$menu_items" | wmenu "${wmenuflags[@]}")
+[ -z "$selection" ] && exit 0
+
+suffix_len=${#active_suffix}
+name=${selection:0:-$suffix_len}
+
+if echo "$active_list" | grep -Fxq "$name"; then
+    if nmcli connection down "$name"; then
+        notify-send "$name" "disconnected"
+    else
+        notify-send "$name" "disconnection fail"
+    fi
+else
+    if nmcli connection up "$name"; then
+        notify-send "$name" "connected"
+    else
+        notify-send "$name" "connection fail"
+    fi
+fi

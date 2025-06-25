@@ -130,6 +130,7 @@ static const char *terminal[] = { "foot", NULL };
 static const char *browser[]  = { "firefox", NULL };
 static const char *explore[]  = { "nemo", NULL };
 static const char *runmenu[]  = { "wmenu-run", WMENUFLAGS, NULL };
+static const char *toggleconnection[] = { LIBDIR "toggleconnection", WMENUFLAGS, NULL };
 
 #include "keys.h"
 static const Key keys[] = {
@@ -142,6 +143,7 @@ static const Key keys[] = {
 	{ MODKEY,                    Key_d,       setlayout,        {.v = &layouts[2]} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, Key_f,       setlayout,        {.v = &layouts[3]} },
 	{ MODKEY,                    Key_f,       togglefloating,   {0} },
+	{ MODKEY,                    Key_n,       spawn,            {.v = toggleconnection} },
 	{ MODKEY,                    Key_m,       spawn,            {.v = terminal} },
 	{ MODKEY,                    Key_space,   togglefullscreen, {0} },
 
