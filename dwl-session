@@ -11,6 +11,7 @@ PREFIX="$(dirname "$(dirname "$(readlink -f "$0")")")"
 WALLPAPER=$(randfile "$HOME/pictures/wallpapers")
 
 autostart=(
+  "wlr-randr --output eDP-1 --mode 3200x2000@60Hz"
   "$PREFIX/lib/dwl/idle $WALLPAPER"
   "swaybg -i $WALLPAPER"
   "mako"
