@@ -74,7 +74,9 @@ install: dwl
 	chmod 644 $(DESTDIR)$(DATADIR)/wayland-sessions/dwl.desktop
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/dwl \
-		$(DESTDIR)$(DATADIR)/wayland-sessions/dwl.desktop
+	      $(DESTDIR)$(PREFIX)/bin/dwl-session \
+	      $(DESTDIR)$(DATADIR)/wayland-sessions/dwl.desktop
+	rm -rf $(DESTDIR)$(PREFIX)/lib/dwl
 
 .SUFFIXES: .c .o
 .c.o:
