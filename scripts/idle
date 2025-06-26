@@ -4,7 +4,7 @@ set -euo pipefail
 if WP=$(randfile "$HOME/pictures/wallpapers"); then
     WP_OPT="-i \"$WP\""
 else
-    WP_OPT="-c 222222"
+    WP_OPT="-c 333332"
 fi
 
 LOCKCMD="swaylock -f $WP_OPT"

@@ -12,16 +12,16 @@ static const int smartborders              = 1;
 static const int showbar                   = 1;
 static const int topbar                    = 1;
 static const char *fonts[]                 = {"monospace:size=12"};
-static const float rootcolor[]             = COLOR(0x000000ff);
+static const float rootcolor[]             = COLOR(0x333332ff);
 static const float fullscreen_bg[]         = {0.0f, 0.0f, 0.0f, 1.0f};
 static const char  kblayout_file[]         = "/tmp/dwl-keymap";
 static const char *kblayout_cmd[]          = {"pkill", "-RTMIN+1", "someblocks", NULL};
 static char *tags[]                        = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 static uint32_t colors[][3]                = {
 	/*               fg          bg          border    */
-	[SchemeNorm] = { 0xbbbbbbff, 0x222222ff, 0x444444ff },
-	[SchemeSel]  = { 0xeeeeeeff, 0x005577ff, 0x005577ff },
-	[SchemeUrg]  = { 0,          0,          0x770000ff },
+	[SchemeNorm] = { 0xd1d1d1ff, 0x333332ff, 0x333332ff },
+	[SchemeSel]  = { 0x333332ff, 0xd1d1d1ff, 0xd1d1d1ff },
+	[SchemeUrg]  = { 0,          0,          0x900000ff },
 };
 
 /* logging */
@@ -119,7 +119,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
-#define WMENUFLAGS "-f", "monospace 12"
+#define WMENUFLAGS "-f", "monospace 12", "-N", "333332", "-n", "d1d1d1", "-M", "d1d1d1", "-m", "333332", "-S", "d1d1d1", "-s", "333332"
 
 static const Layout *tilebstack[] = { &layouts[0], &layouts[1], NULL };
 static const Layout *floatingtile[] = { &layouts[3], &layouts[0], NULL };
