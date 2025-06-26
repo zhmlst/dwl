@@ -192,6 +192,8 @@ static const Key keys[] = {
 
 static const Button buttons[] = {
 	{ ClkLtSymbol, 0,      BTN_LEFT,   cyclelayouts,     {.v = floatingtile} },
+	{ ClkTitle,    0,      BTN_LEFT,   togglefullscreen, {0} },
+	{ ClkTitle,    0,      BTN_RIGHT,  killclient,       {0} },
 	{ ClkClient,   MODKEY, BTN_LEFT,   moveresize,       {.ui = CurMove} },
 	{ ClkClient,   MODKEY, BTN_MIDDLE, togglefloating,   {0} },
 	{ ClkClient,   MODKEY, BTN_RIGHT,  moveresize,       {.ui = CurResize} },
