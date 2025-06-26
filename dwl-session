@@ -7,4 +7,13 @@ export SDL_VIDEODRIVER=wayland
 export CLUTTER_BACKEND=wayland
 export MOZ_ENABLE_WAYLAND=1
 
-exec dwl < <(someblocks -p)
+PREFIX="$(dirname "$(dirname "$(readlink -f "$0")")")"
+WALLPAPER=$(randfile "$HOME/pictures/wallpapers")
+
+autostart=(
+  "$PREFIX/lib/dwl/idle $WALLPAPER"
+  "swaybg -i $WALLPAPER"
+  "mako"
+)
+
+exec dwl -s "$(printf "%s & " "${autostart[@]}")" < <(someblocks -p)

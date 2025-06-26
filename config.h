@@ -27,13 +27,6 @@ static uint32_t colors[][3]                = {
 /* logging */
 static int log_level = WLR_ERROR;
 
-/* Autostart */
-static const char *const autostart[] = {
-    "mako", NULL,
-    "sh", "-c", "swaybg -i $(randfile $HOME/pictures/wallpapers)", NULL,
-    NULL
-};
-
 static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor */
 	{ "firefox",          NULL,       0,            0,           -1 },
