@@ -8,6 +8,7 @@ static const int sloppyfocus               = 1;
 static const int bypass_surface_visibility = 0;
 static const int follow                    = 1;
 static const unsigned int borderpx         = 1;
+static const int smartborders              = 1;
 static const int showbar                   = 1;
 static const int topbar                    = 1;
 static const char *fonts[]                 = {"monospace:size=12"};
