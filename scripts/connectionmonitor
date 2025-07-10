@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+nmcli monitor | while IFS= read -r line; do
+    if [[ "$line" == *"primary connection"* ]]; then
+        pkill -RTMIN+4 someblocks
+    fi
+done

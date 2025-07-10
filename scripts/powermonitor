@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+battery=$(upower -e | grep battery)
+line_power=$(upower -e | grep line_power)
+
+upower -m | while read -r line; do
+    if [[ "$line" == *"$line_power"* ]]; then
+        pkill -RTMIN+5 someblocks
+    else if [[ "$line" == *"$battery"* ]]; then
+        pkill -RTMIN+5 someblocks
+    fi
+done

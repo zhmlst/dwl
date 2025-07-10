@@ -1,0 +1,4 @@
+#!/bin/sh
+set -euo pipefail
+color=$(hyprpicker)
+[ -n "$color" ] && echo "$color" | wl-copy && notify-send "$color" "copied to buffer"

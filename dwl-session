@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=dwl
+export GDK_BACKEND=wayland
+export QT_QPA_PLATFORM=wayland
+export SDL_VIDEODRIVER=wayland
+export CLUTTER_BACKEND=wayland
+export MOZ_ENABLE_WAYLAND=1
+
+PREFIX="$(dirname "$(dirname "$(readlink -f "$0")")")"
+WALLPAPER=$(randfile "$HOME/pictures/wallpapers")
+
+autostart=(
+  "wlr-randr --output eDP-1 --mode 3200x2000@60Hz"
+  "$PREFIX/lib/dwl/idle $WALLPAPER"
+  "swaybg -i $WALLPAPER"
+  "mako"
+)
+
+exec dwl -s "$(printf "%s & " "${autostart[@]}")" < <(sleep 1 && sigbar)
